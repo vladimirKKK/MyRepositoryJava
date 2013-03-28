@@ -23,7 +23,8 @@ public class PresentationMembers {
     static private int i = 0;
     /* имя текущего файла */
     static private String fullFileName = null;
-
+    //------------------------------------------
+    //------------------------------------------
     /**
      * Метод поиска файлов по заданному шаблону.
      * 
