@@ -4,7 +4,7 @@ package ru.relex.education.time;
  * Класс формирования резутирующей строки по заданному образцу строки.
  * @param образец строки
  * @author Vladimir K.
- *
+ *---
  */
 public class TimeFormat {
     private final String formatString;
