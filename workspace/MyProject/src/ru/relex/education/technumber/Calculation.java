@@ -8,6 +8,7 @@ package ru.relex.education.technumber;
 public class Calculation {
 
     /**--------------------------------
+     * --------------------------------
      * @param number максимальное число
      * @param element1 первый элемент поиска
      * @param element2 второй элемент поиска
