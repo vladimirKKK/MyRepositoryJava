@@ -1,0 +1,41 @@
+package xml;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class FindName {
+
+   
+   public static void main(String[] args) throws FileNotFoundException,
+        IOException {
+    // ---------------------------------------------------
+    String fileName = "C:\\WORK\\JAVA\\Temp\\events.xml";
+
+    BufferedReader br = new BufferedReader(new InputStreamReader(
+            new FileInputStream(fileName), "UTF-8"));
+    StringBuilder stringBuilder = new StringBuilder();
+    String line, contentsFile;
+
+    while ((line = br.readLine()) != null) {
+        stringBuilder.append(line + "\n");
+    }
+    contentsFile = stringBuilder.toString();
+    br.close();
+    // System.out.println(contentsFile);
+
+    // ---------------------------------------------------
+    //Поиск названия лекции и даты
+    Pattern idNamePattern = Pattern
+            .compile(".*\\Написание и оптимизация SQL запросов[\\n.]*");
+    Matcher idNameMatcher = idNamePattern.matcher(contentsFile);
+    if (idNameMatcher.find()) System.out.println("Good");  
+    
+
+    }
+
+}

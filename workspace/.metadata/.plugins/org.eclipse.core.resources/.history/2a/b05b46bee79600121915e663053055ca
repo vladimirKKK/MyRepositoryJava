@@ -1,0 +1,75 @@
+package ru.relex.education.zodiac;
+
+import book.Zodiac.SignOfZodiac;
+/**
+ * Êëàññ ğàñ÷åòà çíàêà çîäèàêà ïî çàäàííûì ìåñÿöó è äàòå.
+ * @author Vladimir K.
+ *
+ */
+public class Zodiac3 {
+    /**
+     * Ìåòîä ğàñ÷åòà çíàêà çîäèàêà ïî çàäàííûì ìåñÿöó è äàòå áåç èñïîëüçîâàíèÿ ìàññèâîâ ñ îäèíàğíîé ïğîâåğêîé óñëîâèé.
+    * @param month çàäàííûé ìåñÿö
+    * @param day çàäàííàÿ äàòà
+    * @return  çíàê çîäèàêà 
+    */
+    public static SignOfZodiac determineZodiac(int month, int day) {
+        String sign = null;//çíàê çîäèàêà
+
+                int sum = month * 100 + day;
+                if ((sum >= 121) && (sum < 221)) {
+                    sign = SignOfZodiac.Âîäîëåé.name();
+                    
+                }
+                if ((sum >= 221) && (sum < 321)) {
+                    sign = SignOfZodiac.Ğûáû.name();
+                   
+                }
+                if ((sum >= 321) && (sum < 421)) {
+                    sign = SignOfZodiac.Îâåí.name();
+                   
+                }
+                if ((sum >= 421) && (sum < 521)) {
+                    sign = SignOfZodiac.Òåëåö.name();
+                    
+                }
+                if ((sum >= 521) && (sum < 621)) {
+                    sign = SignOfZodiac.Áëèçíåöû.name();
+                    
+                }
+                if ((sum >= 621) && (sum < 721)) {
+                    sign = SignOfZodiac.Ğàê.name();
+                    
+                }
+                if ((sum >= 721) && (sum < 821)) {
+                    sign = SignOfZodiac.Ëåâ.name();
+                    
+                }
+                if ((sum >= 821) && (sum < 921)) {
+                    sign = SignOfZodiac.Äåâà.name();
+                    
+                }
+                if ((sum >= 921) && (sum < 1021)) {
+                    sign = SignOfZodiac.Âåñû.name();
+                    
+                }
+                if ((sum >= 1021) && (sum < 1121)) {
+                    sign = SignOfZodiac.Ñêîğïèîí.name();
+                    
+                }
+                if ((sum >= 1121) && (sum < 1221)) {
+                    sign = SignOfZodiac.Ñòğåëåö.name();
+                   
+                }
+                if ((sum >= 1221) && (sum <= 1231)) {
+                    sign = SignOfZodiac.Êîçåğîã.name();
+                }
+                if ((sum >= 0101) && (sum < 121)) {
+                    sign = SignOfZodiac.Êîçåğîã.name();
+                }
+          
+        return SignOfZodiac.valueOf(sign);
+
+       
+    }
+}

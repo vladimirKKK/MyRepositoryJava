@@ -1,0 +1,29 @@
+package xml;
+
+import java.io.*;
+import java.util.regex.*;
+
+public class FindParticipantsOfPpresentation {
+    public static void main(String[] args) throws FileNotFoundException,
+    IOException {
+        
+        String fileName = "C:\\WORK\\JAVA\\Temp\\events.xml";
+        FileReader fr = new FileReader(fileName);
+        BufferedReader br = new BufferedReader(fr);
+        StringBuilder stringBuffer = new StringBuilder();
+        String line;
+
+        /* вывод полного названия файла */
+        System.out.println(fileName);
+
+        while ((line = br.readLine()) != null) {
+            stringBuffer.append(line + "\n");
+        }
+        line = stringBuffer.toString();
+        br.close();
+        
+        
+        System.out.println(line);
+    }
+
+}

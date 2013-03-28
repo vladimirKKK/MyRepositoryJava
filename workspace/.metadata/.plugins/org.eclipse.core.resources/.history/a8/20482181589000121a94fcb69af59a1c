@@ -1,0 +1,18 @@
+package catalog;
+import java.io.*;
+
+public class ReadFile {
+    public static void main(String[] args) throws FileNotFoundException,
+            IOException {
+        String s ;
+        String fileName = "c:/Documents and Settings/Test.txt";
+        FileReader fr = new FileReader(fileName);
+        BufferedReader br = new BufferedReader(fr);
+        s = br.readLine();
+
+        while ((s = br.readLine()) != null)
+            System.out.println(s);
+
+    }
+
+}

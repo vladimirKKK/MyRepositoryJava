@@ -1,0 +1,40 @@
+package xml;
+
+import java.io.*;
+import java.util.regex.*;
+
+public class FindParticipantsOfPpresentation {
+    public static void main(String[] args) throws FileNotFoundException,
+            IOException {
+
+        String fileName = "C:\\WORK\\JAVA\\Temp\\events.xml";
+        FileReader fr = new FileReader(fileName);
+        BufferedReader br = new BufferedReader(fr);
+        StringBuilder stringBuffer = new StringBuilder();
+        String line;
+
+        Pattern regexP = Pattern.compile(".*\\<callername\\>([0-9]{1,3})\\-([a-zA-Z\\s]*)\\<.*");
+
+        /* вывод полного названия файла */
+        System.out.println(fileName);
+
+        while ((line = br.readLine()) != null) {
+
+            stringBuffer.append(line );
+        }
+        line = stringBuffer.toString();
+        br.close();
+
+        Matcher regexM = regexP.matcher(line);
+        if (regexM.lookingAt()) {
+            //Pattern regexP2 = Pattern.compile(".*\\<callernumber\\>"
+                    //+ regexM.group(1) + "[-]([a-zA-Z\\s]*).*");
+            //Matcher regexM2 = regexP2.matcher(line);
+            System.out.println(regexM.group(1)+  regexM.group(2)); //+ "." + regexM2.group(1));
+        }
+
+       // if (regexM.lookingAt())
+        //System.out.println(line);
+    }
+
+}

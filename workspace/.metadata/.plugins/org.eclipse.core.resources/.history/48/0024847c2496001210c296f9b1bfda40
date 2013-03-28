@@ -1,0 +1,359 @@
+package xml;
+
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.regex.*;
+import java.util.*;
+import java.io.PrintWriter;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+
+/**
+ * Класс обработки информации из файлов.
+ * 
+ * @author V. Kodenko
+ * 
+ */
+public class PpresentationMembers {
+    static private String regexFile = ".*xml";
+    static private String regexIdName = "\\<callernumber\\>([0-9]+)\\-(.*)\\<";
+    static private String regexTime = "(\\d{13}).*?PARTICIPANT.*?ParticipantJoinEvent.*?\n*?.*?\n*?.*\n*?.*?\\<userId\\>(\\d{2,3})\\<\\/userId|.*(\\d{13}).*PARTICIPANT.*ParticipantLeftEvent.*\\n.*\\<userId\\>(\\d{2,3})\\<.*";
+    static private List<String> filesFound = new ArrayList<String>();
+    /* номер найденного файла */
+    static private int i = 0;
+    /* имя текущего файла */
+    static private String fullFileName = null;
+
+    /**
+     * Метод поиска файлов по заданному шаблону.
+     * 
+     * @param dir
+     *            директория поиска файлов
+     * @param regexFile
+     *            шаблон для поиска
+     * @return список полных имен найденных файлов
+     */
+    public static void findFileInCatalog(String dir, List<String> filesFound) {
+        /* шаблон для поиска файлов */
+
+        Pattern p = Pattern.compile(regexFile);
+        File f1 = new File(dir);
+        File s[] = f1.listFiles();
+
+        if (s != null) {
+            /* цикл для просмотра содержимого каталога */
+            for (int i = 0; i < s.length; i++) {
+                String direct = s[i].toString();
+                /* проверка каталог или файл */
+                if (s[i].isDirectory()) {
+
+                    /* если каталог выполнить метод printCatalog() с новым путем */
+                    findFileInCatalog(direct, filesFound);
+                } else {
+                    /*
+                     * если файл проверить на соответствие шаблону и вывести на
+                     * консоль
+                     */
+                    Matcher m = p.matcher(direct);
+                    if (m.matches())
+
+                        filesFound.add(s[i].toString());
+                }
+                direct = null;
+            }
+        } else
+            System.out.println(dir + " is not a directory");
+    }
+
+    /**
+     * Метод чтения файла в переменную типа String
+     * 
+     * @param fileName
+     *            имя файла
+     * @return переменная типа String, содержащяя тектс файла
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static String readFile(String fileName)
+            throws FileNotFoundException, IOException {
+        /* извлечение данных файла в строковую переменную */
+        BufferedReader br = new BufferedReader(new InputStreamReader(
+                new FileInputStream(fileName), "UTF-8"));
+        StringBuilder stringBuilder = new StringBuilder();
+        /* переменная для хранения прочитанной строки */
+        String contentsFile;
+
+        while ((contentsFile = br.readLine()) != null) {
+            stringBuilder.append(contentsFile + "\n");
+        }
+        contentsFile = stringBuilder.toString();
+        br.close();
+       
+        return contentsFile;
+    }
+
+    /**
+     * Метод формирования результатов в виде .
+     * 
+     * @param direcrory
+     *            директория поиска файлов event.xml
+     * @param lectureName
+     *            название лекции
+     * @return Map - содержащая информацию о участниках лекции
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static Map<String, Attendence> getAttendenceInfo(String fileName,
+            String lectureName) throws FileNotFoundException, IOException {
+        // --------------------------------------------------
+        /* поиск файла в каталоге по шаблону - расширению */
+
+        /*
+         * создание карты для формирования общего результата по слушателям
+         * лекции
+         */
+        Map<String, Attendence> participantFullInfo = new HashMap<String, Attendence>();
+        // ---------------------------------------------------
+        /* поиск в файлах .xml шаблона темы лекции */
+
+        /* чтение содержимого файла */
+
+        String contentsFile = readFile(fileName);
+
+        // ---------------------------------------------------
+        /* Поиск названия лекции */
+        Pattern namePattern = Pattern
+                .compile("metadata contextactivitydescription=\\\""
+                        + lectureName + "\\\"");
+        Matcher nameMatcher = namePattern.matcher(contentsFile);
+        if (nameMatcher.find()) {
+            
+
+            // --------------------------------------------------
+
+            /* шаблон поиска имени и фамилии */
+
+            Pattern idNamePattern = Pattern.compile(regexIdName);
+            Matcher idNameMatcher = idNamePattern.matcher(contentsFile);
+
+            /* формирование карты найденных id */
+            Map<String, String> participant = new HashMap<String, String>();
+            while (idNameMatcher.find()) {
+                String id = idNameMatcher.group(1);
+                String name = idNameMatcher.group(2);
+                
+                participant.put(id, name);
+            }
+
+            // ---------------------------------------------------------
+            Pattern idTimeEnterPattern = Pattern.compile(regexTime);
+            // "event timestamp\\=\\\"(\\d+)\\\" module\\\"PARTICIPANT\\\" eventname\\=\\\"ParticipantJoinEvent\\\".*<userId\\>(\\d{2,3})\\<\\/userId\\>|.*(\\d+).*PARTICIPANT.*ParticipantLeftEvent.*\\n.*\\<userId\\>(\\d{2,3})\\<.*");
+            Matcher idTimeInOutMatcher = idTimeEnterPattern
+                    .matcher(contentsFile);
+            /* пока найдено соответствие шаблону: время входа или выхода */
+            while (idTimeInOutMatcher.find()) {
+                System.out.println(idTimeInOutMatcher.group(1) + "    " + idTimeInOutMatcher.group(2)+ "    " + idTimeInOutMatcher.group(3)+ "   " + idTimeInOutMatcher.group(4));
+                String idEnter = idTimeInOutMatcher.group(2);
+                String timeEnter = idTimeInOutMatcher.group(1);
+                String idExit = idTimeInOutMatcher.group(4);
+                String timeExit = idTimeInOutMatcher.group(3);
+
+                /* если id входа не равно null */
+                if (idEnter != null) {
+
+                    Attendence attendence = participantFullInfo.get(idEnter);
+                    /* если в результирующей Map для данного id есть объект */
+                    if (attendence != null) {
+
+                        /*
+                         * добавить в List новый оъект timeInOut для данного id
+                         */
+
+                        /* найти оъект Attendence для данного id выхода */
+                        /* получить List из Attendence для данного id выхода */
+                        List<SaveTime> timeInOut = attendence.getTimeInOut();
+                        /*
+                         * создать новый оъект timeInOut для данного id и нового
+                         * времени входа
+                         */
+                        /* проверка значения времени перед преобразованием */
+                        if (timeEnter != null) {
+                            Date t = new Date(Long.parseLong(timeEnter));
+                            SaveTime saveTime = new SaveTime(t, null);
+                            /*
+                             * добавить в List новый оъект timeInOut для данного
+                             * id
+                             */
+                            timeInOut.add(saveTime);
+                        }
+                        /*
+                         * если в результирующей Map для данного id нет объекта
+                         */
+                    } else {
+                        /*
+                         * если для данного id есть соответствие в Map
+                         * participant с именами
+                         */
+                        if (participant.get(idEnter) != null) {
+                            /*
+                             * создать новый оъект timeInOut для данного id и
+                             * нового времени входа
+                             */
+                            /* проверка значения времени перед преобразованием */
+                            if (timeEnter != null) {
+                                Date t = new Date(Long.parseLong(timeEnter));
+                                SaveTime saveTime = new SaveTime(t, null);
+                                /*
+                                 * создать List для хранения объектов SaveTime
+                                 * для данного id выхода
+                                 */
+                                List<SaveTime> timeInOut = new ArrayList<SaveTime>();
+                                /*
+                                 * поместить в List объект SaveTime для данного
+                                 * id выхода
+                                 */
+                                timeInOut.add(saveTime);
+                                /*
+                                 * создать Attendence объект для данного id
+                                 * выхода
+                                 */
+                                attendence = new Attendence(
+                                        participant.get(idEnter), timeInOut);
+                                /*
+                                 * положить ключ id выхода и объект Attendence в
+                                 * результирующую Map
+                                 */
+                                participantFullInfo.put(idEnter, attendence);
+                            }
+                        }
+                    }
+                }
+                /* если id входа равно null, значит это id выхода */
+                else {
+                    /* найти оъект participantFullInfo для данного id выхода */
+                    if (participant.get(idExit) != null) {
+                        /* найти оъект Attendence для данного id выхода */
+                        Attendence attendence = participantFullInfo.get(idExit);
+                        /* получить List из Attendence для данного id выхода */
+                        List<SaveTime> timeInOut = attendence.getTimeInOut();
+                        /*
+                         * получить последний элемент из List из Attendence для
+                         * данного id выхода
+                         */
+                        SaveTime saveTime = timeInOut.get(timeInOut.size() - 1);
+                        if (saveTime.getOutputTime() == null) {
+                            /*
+                             * установить время выхода в последнем элементе из
+                             * List из Attendence для данного id выхода
+                             */
+                            /* проверка значения времени перед преобразованием */
+                            if (timeExit != null) {
+                                Date t = new Date(Long.parseLong(timeExit));
+                                saveTime.setOutputTime(t);
+                            }
+                        } else {
+                            if (timeExit != null) {
+                                Date t = new Date(Long.parseLong(timeExit));
+                                SaveTime saveTimeOut = new SaveTime(null, t);
+                                timeInOut.add(saveTimeOut);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return participantFullInfo;
+    }
+
+    /* формирование выходных данных */
+    /**
+     * Метод Main выполнения задачи.
+     * 
+     * @param args
+     *            [0] - каталог для поиска
+     * @param args
+     *            [1] - название лекции
+     * @param args
+     *            [2] - имя файла, содержащего информацию о участниках
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static void main(String[] args) throws FileNotFoundException,
+            IOException {
+
+        /* проверка передачи аргументов: */
+        if (args.length == 3) {
+            // ----------------------------------------
+            /* поиск файлов в заданной директории */
+
+            findFileInCatalog(args[0], filesFound);
+
+            /* извлечение имени файла из найденного списка */
+            for (String fileName : filesFound) {
+                fullFileName = fileName;
+                /* увеличить номер прочитанного файла */
+                i++;
+                // -----------------------------------
+                /* сформировать Map для данного файла */
+                Map<String, Attendence> participantFullInfo = getAttendenceInfo(
+                        fileName, args[1]);
+                /* загрузка директории выходных файлов */
+                String outputFileName = args[2];
+                /* создание имени выходного файла */
+                outputFileName = outputFileName + "\\OutputFile" + i + ".txt";
+                OutputStream os = null;
+
+                try {
+
+                    os = new FileOutputStream(outputFileName);
+                    writeTo(os, participantFullInfo.values());
+                } catch (FileNotFoundException e) {
+                    System.out.println("Ошибка создания файла "
+                            + outputFileName);
+                    System.exit(0);
+                } finally {
+                    if (os != null)
+                        os.close();
+                }
+            }
+        } else
+            System.out
+                    .println("Введите исходные данные в формате: каталог для поиска, "
+                            + "название лекции и  имя каталога выходных файлов, содержащих информацию о участниках");
+    }
+
+    private static void writeTo(OutputStream os,
+            Collection<Attendence> participantFullInfo) {
+        PrintWriter pw = new PrintWriter(os);
+        String contentsFile;
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+        pw.println(fullFileName);
+        pw.println();
+        /* формирование результатов из итоговой Map */
+        for (Attendence entry : participantFullInfo) {
+            contentsFile = String.format("name: %1$-25s ", entry.getName());
+            System.out.println(contentsFile);
+            pw.print(entry.getName());
+            /* извлечение времени входа и выхода для одного пользователя */
+            for (SaveTime saveTime : entry.getTimeInOut()) {
+                /* формирование строки результатов */
+                if (saveTime.getInputTime()==null){
+                contentsFile = String.format(" %1$5s  - %2$5s", saveTime.getInputTime(), df.format(saveTime.getOutputTime()));
+                }
+                else {
+                    if (saveTime.getOutputTime()==null){
+                        contentsFile = String.format("%1$5s  - %2$5s", df.format(saveTime.getInputTime()), saveTime.getOutputTime());
+                    }
+                    else contentsFile = String.format(" %1$5s  - %2$5s", df.format(saveTime.getInputTime()), df.format(saveTime.getOutputTime()));
+                }}
+                //contentsFile = saveTime.getInputTime() + " - " + saveTime.getOutputTime();
+                System.out.println(contentsFile);
+                /* сбор строк результатов в List */
+                pw.println(contentsFile);
+            }
+        pw.flush();
+        }
+        
+    }
+

@@ -1,0 +1,24 @@
+package xml;
+
+public class SaveTime {
+    private String input;
+    private String output;
+
+    public SaveTime(String input, String output) {
+        this.input = input;
+        this.output = output;
+    }
+    public void setInputtTime(String input) {
+        this.input = input;
+    }
+    public void setInputTime(String output) {
+        this.output = output;
+    } 
+    
+    public String getInputTime() {
+        return input;
+    }
+    public String getOutputTime() {
+        return output;
+    }
+}

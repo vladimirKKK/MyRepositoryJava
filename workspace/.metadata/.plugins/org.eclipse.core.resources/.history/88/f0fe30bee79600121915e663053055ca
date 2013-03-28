@@ -1,0 +1,55 @@
+package ru.relex.education.zodiac;
+
+import ru.relex.education.zodiac.SignOfZodiac;
+import ru.relex.education.zodiac.ZodiacSignsInMonth;
+
+/**
+ * Класс задач с использованием знаков зодиака.
+ * 
+ * @author Vladimir K.
+ * 
+ */
+public class Zodiac4 {
+    // int O = 4;
+    /**
+     * Метод расчета знака зодиака по месяцу и дню c использованием одномерного
+     * массива. 
+     * 
+     * @param month
+     * @param day
+     * @return знак зодиака
+     */
+    public static SignOfZodiac determineZodiac(int month, int day) {
+        // результат вычислений - начальное значение
+        SignOfZodiac signum = null;
+        ZodiacSignsInMonth[] signZodiacInYear = { 
+                new ZodiacSignsInMonth(1, "КОЗЕРОГ", "ВОДОЛЕЙ"),
+                new ZodiacSignsInMonth(2, "ВОДОЛЕЙ", "РЫБЫ"), 
+                new ZodiacSignsInMonth(3, "РЫБЫ", "ОВЕН"),
+                new ZodiacSignsInMonth(4, "ОВЕН", "ТЕЛЕЦ"),
+                new ZodiacSignsInMonth(5, "ТЕЛЕЦ", "БЛИЗНЕЦЫ"),
+                new ZodiacSignsInMonth(6, "БЛИЗНЕЦЫ", "РАК"), 
+                new ZodiacSignsInMonth(7, "РАК", "ЛЕВ"),
+                new ZodiacSignsInMonth(8, "ЛЕВ", "ДЕВА"), 
+                new ZodiacSignsInMonth(9, "ДЕВА", "ВЕСЫ"),
+                new ZodiacSignsInMonth(10, "ВЕСЫ", "СКОРПИОН"),
+                new ZodiacSignsInMonth(11, "СКОРПИОН", "СТРЕЛЕЦ"),
+                new ZodiacSignsInMonth(12, "СТРЕЛЕЦ", "КОЗЕРОГ") };
+
+        for (int i = 0; i < 12; i++) {
+            if(signZodiacInYear[i].getNumMonth() == month){
+                if(day <= 2l){
+                    signum = SignOfZodiac.valueOf(signZodiacInYear[i]
+                            .getSign1());
+                } else {
+                    signum = SignOfZodiac.valueOf(signZodiacInYear[i]
+                            .getSign2());
+                }
+                break;
+            }
+
+        }
+        return signum;
+    }
+
+}

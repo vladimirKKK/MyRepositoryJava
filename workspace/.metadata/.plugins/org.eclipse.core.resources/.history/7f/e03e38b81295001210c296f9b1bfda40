@@ -1,0 +1,27 @@
+package Test;
+
+import java.util.*;
+
+public class TestMap {
+
+    public static void main(String[] args) {
+        Map<String, Integer> list = new HashMap<String, Integer>();
+        list.put("one",1);
+        list.put("two",2);
+        System.out.println(list.size());
+        list.containsKey("one");
+        list.containsValue(1);
+        for (String key : list.keySet()) {
+            System.out.println("Key: " + key);
+        }
+        for (int value : list.values()) {
+            System.out.println("Value: " + value);
+        }
+        for (Map.Entry entry : list.entrySet()) {
+            System.out.println("Key: " + entry.getKey() + " Value: "
+                + entry.getValue());
+        }
+
+    }
+
+}

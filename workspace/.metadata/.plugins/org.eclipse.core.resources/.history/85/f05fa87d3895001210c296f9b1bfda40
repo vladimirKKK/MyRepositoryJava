@@ -1,0 +1,42 @@
+package Test;
+
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
+
+
+
+public class ConvertTime {
+
+    public static void main(String[] args) {
+        Timestamp st = new Timestamp(System.currentTimeMillis());
+        //Timestamp stt = 1363687062837;
+        Timestamp stt = new Timestamp(1363687062);
+        java.util.Date date1 = new java.util.Date(1399987062);
+        java.util.Date date3 = new java.util.Date(stt.getTime());
+        java.sql.Date date2 = new java.sql.Date(st.getTime());
+        
+        String s = "1363687062";
+        Timestamp t = new Timestamp(1363687063); // инициализируется датой с начала эпохи 
+        //t = t.toTimestamp(s); 
+        java.util.Date date= new java.util.Date();
+        System.out.println(new Timestamp(date.getTime()));
+        Date d = new Date(1363687063);
+        
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTimeInMillis(1363687063 * 1000);
+        String date7 = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date (1363687063*1000));
+
+    
+
+//        System.out.println(st); //print date,Time, nano sec
+//        System.out.println(date1); //print date, time
+//        System.out.println(date2); //print date
+//        System.out.println(date3);
+//        System.out.println(t);
+//        System.out.println(d);
+        System.out.println(date7);
+    }
+
+}

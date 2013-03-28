@@ -1,0 +1,22 @@
+package xml;
+
+import java.util.List;
+
+public class Attendence {
+    
+    private String name;
+    private List<SaveTime>  timeInOut;
+   
+
+    public Attendence(String name, List<SaveTime> output) {
+        this.name = name;
+        this.timeInOut = output;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public List<SaveTime>  getOutputTime() {
+        return timeInOut;
+    }
+ }

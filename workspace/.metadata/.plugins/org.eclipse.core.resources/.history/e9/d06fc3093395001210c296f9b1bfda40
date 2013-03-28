@@ -1,0 +1,27 @@
+package Test;
+
+import java.sql.Timestamp;
+
+
+
+public class ConvertTime {
+
+    public static void main(String[] args) {
+        Timestamp st = new Timestamp(System.currentTimeMillis());
+        //Timestamp stt = 1363687062837;
+        Timestamp stt = new Timestamp(1363687062);
+        java.util.Date date1 = new java.util.Date(st.getTime());
+        java.util.Date date3 = new java.util.Date(stt.getTime());
+        java.sql.Date date2 = new java.sql.Date(st.getTime());
+        
+        java.util.Date time = new java.util.Date(1363687062);
+
+        System.out.println(st); //print date,Time, nano sec
+        System.out.println(date1); //print date, time
+        System.out.println(date2); //print date
+        System.out.println(date3);
+        System.out.println(time);
+        
+    }
+
+}
